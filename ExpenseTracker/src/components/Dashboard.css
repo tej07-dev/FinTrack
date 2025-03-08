@@ -1,0 +1,165 @@
+
+.container-d {
+  max-width: auto;
+  margin: 50px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+  background: #F4F6F9;  
+  color: #1B1F3B; 
+  margin-bottom: 50px;
+  border-radius: 12px;
+}
+
+.text-center {
+  color: #070202; 
+
+}
+
+.card-d {
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  padding: 20px;
+  margin: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.card-d:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-card {
+  background: linear-gradient(135deg, #1B1F3B, #17A2B8);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+    
+.form-control {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 2px solid #1E3A8A;
+  border-radius: 8px;
+  background: #F8F9FA;
+  outline: none;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.form-control:focus {
+  border-color: #2E8B57;
+  box-shadow: 0 0 6px rgba(46, 139, 87, 0.5);
+}
+
+
+
+.summary-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+.text-danger {
+  color: #E74C3C !important; 
+}
+
+.text-success {
+  color: #28A745 !important; 
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+.recommendations {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.recommendations h4 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.list-group-item {
+  border: none;
+  background: #F4F6F9; 
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.expense-table {
+  margin-top: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.expense-table thead {
+  background: #1B1F3B; 
+  color: white;
+}
+
+.expense-table tbody tr:nth-of-type(odd) {
+  background: #E3F2FD; 
+}
+
+
+.btn-primary {
+  width: 100%;
+  background-color: #2E8B57;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+
+  background-color: #c6b9c3;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+      width: 100%;
+  }
+
+  .card-d, .summary-box, .recommendations {
+      margin-bottom: 15px;
+  }
+
+  .welcome-card {
+      font-size: 16px;
+  }
+
+  .expense-table thead {
+      font-size: 14px;
+  }
+}

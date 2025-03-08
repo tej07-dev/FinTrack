@@ -1,0 +1,36 @@
+.video-card {
+    width: 350px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    margin:40px;
+  }
+  
+  .video-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .video {
+    width: 100%;
+    height: 200px;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .video-info {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .video-info h3 {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .video-info p {
+    font-size: 14px;
+    color: #666;
+  }
+  
