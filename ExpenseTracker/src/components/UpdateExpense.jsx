@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import API from "../api/axios";
 const UpdateExpense = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const UpdateExpense = () => {
   useEffect(() => {
     const fetchExpense = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/get-expense/${id}`, {
+        const response = await API.get(`/api/expenses/get-expense/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setOriginalExpense(response.data);
@@ -60,7 +60,7 @@ const UpdateExpense = () => {
             return;
         }
 
-        await axios.put(`http://localhost:3000/update-expense/${id}`, formData, {
+        await API.put(`/api/expenses/update-expense/${id}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`, 

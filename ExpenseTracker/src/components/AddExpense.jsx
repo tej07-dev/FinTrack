@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import axios from 'axios'
+
+import API from "../api/axios";
 import './AddExpense.css'
 const AddExpense = () => {
   const [expense, setExpense] = useState({
@@ -55,8 +56,8 @@ const AddExpense = () => {
         formData.append(key, expense[key]);
       });
 
-      const response = await axios.post("http://localhost:3000/add-expense", formData, {
-        headers: { "Content-Type": "multipart/form-data",Authorization:`Bearer ${localStorage.getItem("token")}`},
+      const response = await API.post("/api/expenses/add-expense", formData, {
+        headers: { "Content-Type": "multipart/form-data"},
       });
 
       setAlert({ message: "Expense added successfully!", type: "success" });

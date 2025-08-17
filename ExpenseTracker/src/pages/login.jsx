@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 import './Pages.css'
 
 const Login = ({ setIsLoggedIn }) => {
@@ -13,7 +13,7 @@ const Login = ({ setIsLoggedIn }) => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,8 @@ const Login = ({ setIsLoggedIn }) => {
         <button type="submit" className="btn btn-primary">Login</button>
       </form>
       <p className="mt-3">
-        Don't have an account? <a href="/register">Register here</a>
+        Don't have an account? <Link to="/login">Login here</Link>
+
       </p>
     </div>
   );

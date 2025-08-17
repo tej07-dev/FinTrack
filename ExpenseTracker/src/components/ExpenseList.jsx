@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import './ExpenseList.css'
+import API from "../api/axios";
 export default function ExpenseList() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ export default function ExpenseList() {
   
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/get-expenses',{headers:{Authorization:`Bearer ${token}`},});
+      const response = await API.get('/api/expenses/get-expenses');
       setExpenses(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -37,7 +38,7 @@ export default function ExpenseList() {
   
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/delete-expense/${id}`,{headers:{Authorization:`Bearer ${token}`},});
+      await API.delete(`/api/expenses/delete-expense/${id}`);
       setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense._id !== id));
     } catch (error) {
       console.error("Error deleting expense:", error);
@@ -121,7 +122,7 @@ export default function ExpenseList() {
                           <td>
                   {expense.receiptImage ? (
                     <img
-                      src={`http://localhost:3000/uploads/${expense.receiptImage}`}
+                      src={`/api/expenses/uploads/${expense.receiptImage}`}
                       alt="Receipt"
                       width="400"
                       height="400"

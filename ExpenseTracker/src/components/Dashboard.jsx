@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { ResponsiveContainer } from "recharts";
+
+import API from '../api/axios';
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import './Dashboard.css';
 
@@ -20,6 +22,16 @@ export default function Dashboard() {
     const [wantsToSetBudget, setWantsToSetBudget] = useState(null);
     const [isBudgetLoaded, setIsBudgetLoaded] = useState(false);
 
+    // 🔹 Handle API Errors (token expiry, etc.)
+    const handleApiError = (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.clear();
+            navigate("/login");
+        } else {
+            console.error("API Error:", error);
+        }
+    };
+
     useEffect(() => {
         if (!token) {
             navigate("/login");
@@ -30,7 +42,7 @@ export default function Dashboard() {
     }, [token, navigate]);
 
     useEffect(() => {
-        if (isBudgetLoaded) {
+        if (isBudgetLoaded && budget > 0) {
             setRemainingBudget(budget - totalExpenses);
         }
     }, [budget, totalExpenses, isBudgetLoaded]);
@@ -43,25 +55,21 @@ export default function Dashboard() {
 
     const fetchExpenses = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/get-expenses", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await API.get("/api/expenses/get-expenses");
             setExpenses(response.data);
             calculateSummary(response.data);
         } catch (error) {
-            console.error("Error fetching expenses:", error);
+            handleApiError(error);
         }
     };
 
     const fetchBudget = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/get-budget", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await API.get("/api/budget/get-budget");
             setBudget(response.data.budget);
             setIsBudgetLoaded(true);
         } catch (error) {
-            console.error("Error fetching budget:", error);
+            handleApiError(error);
         }
     };
 
@@ -117,14 +125,12 @@ export default function Dashboard() {
             alert("Please enter a valid budget amount.");
             return;
         }
-
         try {
-            await axios.post("http://localhost:3000/set-budget", { budget }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await API.post("/api/budget/set-budget", { budget });
+            setIsBudgetLoaded(true); // 🔹 Update state so UI refreshes immediately
             alert("Budget saved successfully!");
         } catch (error) {
-            console.error("Error saving budget:", error);
+            handleApiError(error);
         }
     };
 
@@ -177,13 +183,11 @@ export default function Dashboard() {
                 </div>
             )}
 
-            
-            
-           <div className="row">
+            <div className="row">
                 <div className="col-md-4">
                     <div className="card-d p-3 shadow-sm bg-light">
                         <h5>Budget</h5>
-                        <h4 className="text-success">Rs. {budget}</h4>
+                        <h4 className="text-success">Rs. {budget || "Not Set"}</h4>
                     </div>
                 </div>
                 <div className="col-md-4">
@@ -199,68 +203,83 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-           
+
             <div className="row mt-4">
                 <div className="col-md-12">
-                     <div className="card p-4 shadow-sm">
-                         <h4>Saving Recommendations</h4>
-                         <ul className="list-group">
-                             {recommendations.length > 0 ? (
-                                 recommendations.map((rec, index) => (
-                                     <li key={index} className="list-group-item">{rec}</li>
-                                 ))
-                             ) : (
+                    <div className="card p-4 shadow-sm">
+                        <h4>Saving Recommendations</h4>
+                        <ul className="list-group">
+                            {recommendations.length > 0 ? (
+                                recommendations.map((rec, index) => (
+                                    <li key={index} className="list-group-item">{rec}</li>
+                                ))
+                            ) : (
                                 <li className="list-group-item">🎉 You're managing expenses well! Keep it up.</li>
                             )}
                         </ul>
                     </div>
                 </div>
-             </div>
-                         <div className="chart-container text-center mt-4">
-                 <PieChart width={400} height={300}>
-                     <Pie data={pieChartData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
-                         {pieChartData.map((entry, index) => (
-                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                         ))}
-                     </Pie>
-                     <Tooltip />
-                     <Legend />
-                 </PieChart>
-             </div>
-            
-             <div className="row mt-4">
-                 <div className="col-md-12">
-                     <div className="card-d p-4 shadow-sm">
-                         <h4>Recent Expenses</h4>
-                         <table className="table table-striped">
-                             <thead>
-                                 <tr>
-                                     <th>Description</th>
-                                     <th>Amount</th>
-                                     <th>Category</th>
-                                     <th>Date</th>
-                                 </tr>
-                             </thead>
-                             <tbody>
-                                 {expenses.length > 0 ? (
-                                     expenses.map((expense, index) => (
-                                         <tr key={index}>
-                                             <td>{expense.description}</td>
-                                             <td>Rs. {expense.amount}</td>
-                                             <td>{expense.category}</td>
-                                             <td>{new Date(expense.date).toLocaleDateString()}</td>
-                                         </tr>
-                                     ))
-                                 ) : (
-                                     <tr>
-                                         <td colSpan="4" className="text-center text-muted">No expenses recorded yet.</td>
-                                     </tr>
-                                 )}
-                             </tbody>
+            </div>
+
+            <div className="chart-container text-center mt-4">
+                <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                        <Pie
+                            data={pieChartData}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                        >
+                            {pieChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col-md-12">
+                    <div className="card-d p-4 shadow-sm">
+                        <h4>Recent Expenses</h4>
+                        <table className="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {expenses.length > 0 ? (
+                                    expenses.map((expense, index) => (
+                                        <tr key={index}>
+                                            <td>{expense.description}</td>
+                                            <td>Rs. {expense.amount}</td>
+                                            <td>{expense.category}</td>
+                                            {/* 🔹 Consistent date format */}
+                                            <td>{new Date(expense.date).toLocaleDateString("en-IN", {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric"
+                                            })}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="text-center text-muted">No expenses recorded yet.</td>
+                                    </tr>
+                                )}
+                            </tbody>
                         </table>
                     </div>
                 </div>
-            </div> 
+            </div>
 
         </div>
     );
